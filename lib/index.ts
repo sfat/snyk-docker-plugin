@@ -1,3 +1,5 @@
+import * as nodeAnalyzer from './analyzer/node-analyzer';
+
 const debug = require('debug')('snyk');
 
 import * as analyzer from './analyzer';
@@ -14,6 +16,7 @@ function inspect(root: string, targetFile?: string, options?: any) {
     getRuntime(),
     getDependencies(targetImage),
     dockerFile.getBaseImageName(targetFile),
+    getAppDependencies(targetImage),
   ])
     .then((result) => {
       const metadata = {
@@ -25,6 +28,7 @@ function inspect(root: string, targetFile?: string, options?: any) {
       const pkg: any = result[1].package;
       pkg.docker = pkg.docker || {};
       pkg.docker.baseImage = result[2];
+      pkg.docker.appDependencies = result[3];
       return {
         plugin: metadata,
         package: pkg,
@@ -72,6 +76,15 @@ function handleCommonErrors(error, targetImage: string) {
   if (error.indexOf('Error processing image:') !== -1) {
     throw new Error('Failed processing image:' + targetImage);
   }
+}
+
+function getAppDependencies(targetImage: string) {
+  return Promise.all([
+    nodeAnalyzer.analyze(targetImage),
+  ])
+    .then(res => [
+      {packageManager: 'node', package: res[0]},
+    ]);
 }
 
 function getDependencies(targetImage: string) {

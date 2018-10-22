@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "debug": "^3",
+    "snyk-resolve-deps": "^4.0.2",
     "tslib": "^1"
   },
   "devDependencies": {
