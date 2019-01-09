@@ -34,6 +34,7 @@ async function analyze(targetImage: string) {
   let binaries;
   try {
     binaries = await binariesAnalyzer.analyze(targetImage, installedPackages);
+    console.log(' hereeee ^^^^ binaries', binaries);
   } catch (err) {
     debug(`Error while running binaries analyzer: '${err}'`);
     throw new Error('Failed to detect binaries versions');
