@@ -14,7 +14,9 @@ async function extract(targetImage: string): Promise<Binary | null> {
       run('node', [ '--version' ]);
     return parseNodeBinary(binaryVersion);
   } catch (stderr) {
-    if (typeof stderr === 'string' && stderr.indexOf('not found') >= 0) {
+    if (typeof stderr === 'string' &&
+      (stderr.indexOf('not found') >= 0 ||
+      stderr.indexOf('no such file or directory') >= 0)) {
       return null;
     }
     throw new Error(stderr);
